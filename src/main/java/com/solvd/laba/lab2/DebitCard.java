@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.exceptions.InsufficientFundsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

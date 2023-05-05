@@ -1,5 +1,7 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.exceptions.EmployeeNotFoundException;
+import com.solvd.laba.lab2.exceptions.PaymentNotFoundException;
 import com.solvd.util.collections.LinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
