@@ -1,1 +1,1 @@
-Number of unique words: 19905
+19905

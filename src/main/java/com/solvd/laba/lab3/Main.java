@@ -20,17 +20,17 @@ public class Main {
         }
 
         // Split text into words using StringUtils
-        List<String> words = List.of(StringUtils.split(text));
+        List<String> list = List.of(StringUtils.split(text));
 
         // Count unique words using a HashSet
-        HashSet<String> uniqueWords = new HashSet<>(words);
+        HashSet<String> hashMap = new HashSet<>(list);
 
         // Output file
         File outputFile = new File("src\\main\\java\\com\\solvd\\laba\\lab3\\output.txt");
 
         // Write count to output file using FileUtils
         try {
-            FileUtils.writeStringToFile(outputFile, "Number of unique words: " + uniqueWords.size(), StandardCharsets.UTF_8);
+            FileUtils.writeStringToFile(outputFile, String.valueOf(hashMap.size()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
