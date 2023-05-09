@@ -32,7 +32,6 @@ public class Main {
         try {
             FileUtils.writeStringToFile(outputFile, "Number of unique words: " + uniqueWords.size(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            System.out.println("asdf");
             e.printStackTrace();
         }
     }
