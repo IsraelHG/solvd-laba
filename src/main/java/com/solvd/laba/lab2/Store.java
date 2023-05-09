@@ -2,6 +2,7 @@ package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.exceptions.EmployeeNotFoundException;
 import com.solvd.laba.lab2.exceptions.PaymentNotFoundException;
+import com.solvd.laba.lab2.interfaces.Inventory;
 import com.solvd.util.collections.LinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Store {
+public class Store implements Inventory {
     public static final Logger logger = LogManager.getLogger(Store.class.getName());
 
     private String name;
@@ -60,11 +61,13 @@ public class Store {
         }
     }
 
+    @Override
     public void addProduct(String name, double price, int quantity) {
         Product product = new Product(name, price, quantity);
         products.put(name, product);
     }
 
+    @Override
     public void removeProduct(String name) {
         products.remove(name);
     }

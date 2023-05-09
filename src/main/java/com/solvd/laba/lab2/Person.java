@@ -1,8 +1,10 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.interfaces.PersonInfo;
+
 import java.util.Objects;
 
-public abstract class Person {
+public abstract class Person implements PersonInfo {
     protected String name;
     protected int age;
 
@@ -11,18 +13,22 @@ public abstract class Person {
         this.age = age;
     }
 
+    @Override
     public final String getName() {
         return this.name;
     }
 
+    @Override
     public final void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public final int getAge() {
         return this.age;
     }
 
+    @Override
     public final void setAge(int age) {
         this.age = age;
     }

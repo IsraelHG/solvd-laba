@@ -31,9 +31,9 @@ public class Main {
         store.addProduct("ham", 5.5, 25);
         store.addProduct("alcohol", 20.0, 4);
 
-        customerIsrael.doings();
-        employeeJohn.doings();
-        managerLester.doings();
+        customerIsrael.browse();
+        employeeJohn.restock();
+        managerLester.manage();
         store.getHelp(customerIsrael, "milk");
 
         Cart cart = new Cart(customerIsrael);

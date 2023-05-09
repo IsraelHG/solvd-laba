@@ -1,10 +1,11 @@
 package com.solvd.laba.lab2;
 
-import com.solvd.laba.lab2.interfaces.DifferentDoings;
+import com.solvd.laba.lab2.interfaces.Browsable;
+import com.solvd.laba.lab2.interfaces.Restockable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Employee extends Person implements DifferentDoings {
+public class Employee extends Person implements Browsable, Restockable {
     public static final Logger logger = LogManager.getLogger(Employee.class.getName());
     
     protected String email;
@@ -23,7 +24,12 @@ public class Employee extends Person implements DifferentDoings {
     }
 
     @Override
-    public void doings() {
-        logger.info("Restocking items...");
+    public void browse() {
+        logger.info(this.name + " is browsing the store...");
+    }
+
+    @Override
+    public void restock() {
+        logger.info(this.name + " is restocking shelves...");
     }
 }
