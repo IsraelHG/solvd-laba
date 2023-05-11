@@ -13,7 +13,7 @@ public class Main {
 
         // Read text from input file using FileUtils
         try {
-            text = FileUtils.readFileToString(new File("src\\main\\java\\com\\solvd\\laba\\lab3\\input.txt"), StandardCharsets.UTF_8);
+            text = FileUtils.readFileToString(new File("src\\main\\resources\\input.txt"), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -26,7 +26,7 @@ public class Main {
         HashSet<String> hashMap = new HashSet<>(list);
 
         // Output file
-        File outputFile = new File("src\\main\\java\\com\\solvd\\laba\\lab3\\output.txt");
+        File outputFile = new File("src\\main\\resources\\output.txt");
 
         // Write count to output file using FileUtils
         try {
