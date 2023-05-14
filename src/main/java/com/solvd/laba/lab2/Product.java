@@ -1,14 +1,19 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.Category;
+import com.solvd.util.function.DiscountCalculator;
+
 public class Product {
     private String name;
     private double price;
     private int quantity;
+    Category category;
 
-    public Product(String name, double price, int quantity) {
+    public Product(String name, double price, int quantity, Category category) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+        this.category = category;
     }
 
     public void setName(String name) {
@@ -34,6 +39,15 @@ public class Product {
     public int getQuantity() {
         return quantity;
     }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
 
     public void subtractProduct(Product product, int quantity) {
         product.quantity -= quantity;

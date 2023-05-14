@@ -39,7 +39,7 @@ public final class Cart {
             }
         }
         if (!found) {
-            Product productToCart = new Product(itemName, store.getProduct(itemName).getPrice(), quantity);
+            Product productToCart = new Product(itemName, store.getProduct(itemName).getPrice(), quantity, store.getProduct(itemName).getCategory());
             cart.add(productToCart);
         }
     }

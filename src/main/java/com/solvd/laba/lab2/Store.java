@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.Category;
 import com.solvd.laba.lab2.exceptions.EmployeeNotFoundException;
 import com.solvd.laba.lab2.exceptions.PaymentNotFoundException;
 import com.solvd.laba.lab2.interfaces.Inventory;
@@ -62,8 +63,8 @@ public class Store implements Inventory {
     }
 
     @Override
-    public void addProduct(String name, double price, int quantity) {
-        Product product = new Product(name, price, quantity);
+    public void addProduct(String name, double price, int quantity, Category category) {
+        Product product = new Product(name, price, quantity, category);
         products.put(name, product);
     }
 
@@ -124,7 +125,6 @@ public class Store implements Inventory {
                     + " " + products.get(key).getName() + " available today.");
         }
     }
-
 
     public void clearCart(Cart cart) {
         cart.clear();
