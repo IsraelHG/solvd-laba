@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Employee extends Person implements Browsable, Restockable {
-    public static final Logger logger = LogManager.getLogger(Employee.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(Employee.class.getName());
     
     protected String email;
 
@@ -25,11 +25,11 @@ public class Employee extends Person implements Browsable, Restockable {
 
     @Override
     public void browse() {
-        logger.info(this.name + " is browsing the store...");
+        LOGGER.info(this.name + " is browsing the store...");
     }
 
     @Override
     public void restock() {
-        logger.info(this.name + " is restocking shelves...");
+        LOGGER.info(this.name + " is restocking shelves...");
     }
 }

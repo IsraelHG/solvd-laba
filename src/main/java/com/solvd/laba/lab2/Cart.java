@@ -5,9 +5,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.function.BinaryOperator;
 
+/**
+ * Represents a shopping cart that contains a list of products.
+ */
 public final class Cart {
-    public static final Logger logger = LogManager.getLogger(Cart.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(Cart.class.getName());
 
     private final ArrayList<Product> cart;
     private final Customer customer;
@@ -26,7 +30,7 @@ public final class Cart {
             try {
                 throw new UnderageException(customer.getName() + " is under 21. " + customer.getName() + " cannot buy Alcohol", new RuntimeException());
             } catch (UnderageException e) {
-                logger.info(e.getMessage() + ", " + e.getCause());
+                LOGGER.info(e.getMessage() + ", " + e.getCause());
                 return;
             }
         }
@@ -39,7 +43,9 @@ public final class Cart {
             }
         }
         if (!found) {
-            Product productToCart = new Product(itemName, store.getProduct(itemName).getPrice(), quantity, store.getProduct(itemName).getCategory());
+            Product productToCart = new Product(itemName, store.getProduct(itemName).getId(),
+                    store.getProduct(itemName).getPrice(), quantity,
+                    store.getProduct(itemName).getCategory());
             cart.add(productToCart);
         }
     }
@@ -61,7 +67,7 @@ public final class Cart {
     }
 
     public void printCart() {
-        logger.info(cart);
+        LOGGER.info("Printing " + customer.getName() + "'s cart: \n"+ cart);
     }
 
     public ArrayList<Product> getItems() {
@@ -75,5 +81,43 @@ public final class Cart {
         }
         total = total * (1 + Main.TAX);
         return total;
+    }
+
+    /**
+     * Calculates the total price of products in the cart using the provided binary operator.
+     *
+     * @param totalPriceCalculator The binary operator that defines the operation to be performed on the accumulated total and product prices.
+     * @return The total price of products in the cart.
+     */
+    public double calculateTotalPrice(BinaryOperator<Double> totalPriceCalculator) {
+        double total = 0.0;
+        for (Product product : cart) {
+            total = totalPriceCalculator.apply(total, product.getPrice() * product.getQuantity());
+        }
+        return total * (1 + Main.TAX);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder cartItems = new StringBuilder();
+        int total = 0;
+
+        if (cart.isEmpty()) {
+            return cartItems + "empty";
+        }
+
+        for (Product product : cart) {
+            cartItems.append("Product: ").append(product.getName())
+                    .append(", ID: ").append(product.getId())
+                    .append(", Price: $").append(product.getPrice())
+                    .append(", Quantity: ").append(product.getQuantity())
+                    .append("\n");
+            total += product.getPrice() * product.getQuantity();
+        }
+        cartItems.append("----------------------\n");
+        cartItems.append("Subtotal: $").append((double)total).append("\n");
+        cartItems.append("Total: $").append(total * (1 + Main.TAX)).append("\n");
+
+        return cartItems.toString();
     }
 }
