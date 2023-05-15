@@ -5,16 +5,24 @@ import com.solvd.laba.lab2.exceptions.EmployeeNotFoundException;
 import com.solvd.laba.lab2.exceptions.PaymentNotFoundException;
 import com.solvd.laba.lab2.interfaces.Inventory;
 import com.solvd.util.collections.LinkedList;
+import com.solvd.util.function.DiscountCalculator;
+import com.solvd.util.function.FilterPredicate;
+import com.solvd.util.function.ProductValidator;
+import com.solvd.util.function.SortingFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Predicate;
 
+/**
+ * The Store class represents an online store.
+ */
 public class Store implements Inventory {
-    public static final Logger logger = LogManager.getLogger(Store.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(Store.class.getName());
 
     private String name;
     private String address;
@@ -22,13 +30,37 @@ public class Store implements Inventory {
     private HashMap<String, Product> products;
     private final ArrayList<Account> customerAccounts;
     private final LinkedList<Employee> employeeAccounts;
+    private IntSupplier idSupplier;
+    private final Set<Integer> generatedIds;
+    private int maxId;
+    private int nextId;
 
+    /**
+     * Constructs a new Store object.
+     * Initializes the store name, and address, along with generatedIds set, maximum ID value, and next ID to be generated.
+     * Configures the ID supplier as a lambda expression to generate unique IDs.
+     */
     public Store(String name, String address) {
         this.name = name;
         this.address = address;
         this.products = new HashMap<>();
         this.customerAccounts = new ArrayList<>();
         this.employeeAccounts = new LinkedList<>();
+
+        generatedIds = new HashSet<>();
+        maxId = 999; // Maximum ID value
+        nextId = 0;
+        // Lambda expression for the IntSupplier functional interface.
+        idSupplier = () -> {
+            if (nextId > maxId) {
+                throw new IllegalStateException("No more unique IDs available.");
+            }
+            while (generatedIds.contains(nextId)) {
+                nextId++;
+            }
+            generatedIds.add(nextId);
+            return nextId;
+        };
     }
 
     public void setName(String name) {
@@ -37,6 +69,22 @@ public class Store implements Inventory {
 
     public String getName() {
         return this.name;
+    }
+
+    public int getMaxId() {
+        return maxId;
+    }
+
+    public void setMaxId(int maxId) {
+        this.maxId = maxId;
+    }
+
+    public void setIdSupplier(IntSupplier idSupplier) {
+        this.idSupplier = idSupplier;
+    }
+
+    public IntSupplier getIdSupplier() {
+        return idSupplier;
     }
 
     public void setAddress(String address) {
@@ -58,14 +106,32 @@ public class Store implements Inventory {
     public void displayProducts() {
         for (Map.Entry<String, Product> entry : products.entrySet()) {
             Product product = entry.getValue();
-            logger.info(product.getName() + " - (price: " + product.getPrice() + ") - (quantity: " + product.getQuantity() + ")");
+            LOGGER.info(product);
+            System.out.println(product);
         }
+        System.out.println();
     }
 
     @Override
     public void addProduct(String name, double price, int quantity, Category category) {
-        Product product = new Product(name, price, quantity, category);
+        //Generates unique ID's using the IntSupplier functional interface.
+        int id = idSupplier.getAsInt();
+        Product product = new Product(name, id, price, quantity, category);
         products.put(name, product);
+    }
+
+    /**
+     * Updates the price of a product using the provided price updater function.
+     *
+     * @param productName  The name of the product.
+     * @param priceUpdater The function that takes the current price as input and returns the updated price.
+     */
+    public void updateProductPrice(String productName, Function<Double, Double> priceUpdater) {
+        Product product = getProduct(productName);
+        double currentPrice = product.getPrice();
+        double updatedPrice = priceUpdater.apply(currentPrice);
+        product.setPrice(updatedPrice);
+        LOGGER.info("Updated price for " + productName + ": $" + updatedPrice);
     }
 
     @Override
@@ -93,7 +159,7 @@ public class Store implements Inventory {
     }
 
     public void printCustomers() {
-        logger.info(customerAccounts.toString());
+        LOGGER.info(customerAccounts.toString());
     }
 
     //---------------------------------------------------
@@ -106,7 +172,7 @@ public class Store implements Inventory {
     }
 
     public void printEmployees() {
-        logger.info(employeeAccounts.toString());
+        LOGGER.info(employeeAccounts.toString());
     }
     //---------------------------------------------------
 
@@ -116,14 +182,95 @@ public class Store implements Inventory {
                 throw new EmployeeNotFoundException("Sorry " + customer.getName()
                         + ", there are no employees available to help you today.", new RuntimeException());
             } catch (EmployeeNotFoundException enfe) {
-                logger.info(enfe.getMessage() + ", " + enfe.getCause());
+                LOGGER.info(enfe.getMessage() + ", " + enfe.getCause());
             }
         } else {
-            logger.info("Hi " + customer.getName() +
+            LOGGER.info("Hi " + customer.getName() +
                     ", my name is " + employeeAccounts.get(0).getName() +
                     ". There's " + products.get(key).getQuantity()
                     + " " + products.get(key).getName() + " available today.");
         }
+    }
+
+    /**
+     * Applies a discount to a specific product in the store.
+     *
+     * @param store the store object
+     * @param productName the name of the product to apply the discount to
+     * @param discountRate the rate of the discount
+     * @param discountCalculator the discount calculator lambda function
+     */
+    public void addDiscounts(Store store, String productName, double discountRate, DiscountCalculator<Product> discountCalculator) {
+        Product discountedProduct = store.getProduct(productName);
+
+        // Calculate the discount using the discount calculator lambda function
+        double discount = discountCalculator.calculateDiscount(discountedProduct, discountRate);
+
+        // Update the price with the discounted price
+        discountedProduct.setPrice(discountedProduct.getPrice() - discount);
+
+        // Print the details of the product and the discount
+        LOGGER.info("Product: " + discountedProduct.getName());
+        LOGGER.info("Discount: $" + discount);
+        LOGGER.info("Final Price: $" + (discountedProduct.getPrice()));
+    }
+
+    /**
+     * Filters the products in the store based on the provided filtering predicate.
+     *
+     * @param filterPredicate the predicate that defines the filtering logic
+     * @return a list of products that satisfy the filtering condition
+     */
+    public List<Product> filterProducts(FilterPredicate<Product> filterPredicate) {
+        List<Product> filteredProducts = new ArrayList<>();
+        // Iterate over the products and apply the filter predicate
+        for (Product product : products.values()) {
+            if (filterPredicate.test(product)) {
+                filteredProducts.add(product);
+            }
+        }
+        return filteredProducts;
+    }
+
+    /**
+     * Validates the products in the store based on the specified product validator.
+     *
+     * @param validator The product validator that defines the validation criteria.
+     */
+    public void validateProducts(ProductValidator validator) {
+        for (Product product : products.values()) {
+            if (validator.validate(product)) {
+                LOGGER.info(product);
+            }
+        }
+    }
+
+    /**
+     * Sorts the products in the store based on the specified sorting function.
+     *
+     * @param sortingFunction The sorting function that defines the sorting logic.
+     * @return The sorted list of products.
+     */
+    public List<Product> sortProducts(SortingFunction<Product> sortingFunction) {
+        List<Product> productList = new ArrayList<>(products.values());
+        sortingFunction.sort(productList);
+        return productList;
+    }
+
+    /**
+     * Sends a notification to the customer with the specified email.
+     *
+     * @param email           The email of the customer to send the notification to.
+     * @param notificationSender The functional interface implementation responsible for sending the notification.
+     */
+    public void sendNotification(String email, Consumer<String> notificationSender) {
+        for (Account acc : customerAccounts) {
+            if (acc.getEmail().equals(email)) {
+                notificationSender.accept(acc.getEmail());
+                return;
+            }
+        }
+        LOGGER.error("Customer not found with email: " + email);
     }
 
     public void clearCart(Cart cart) {
@@ -139,16 +286,15 @@ public class Store implements Inventory {
             try {
                 throw new PaymentNotFoundException("Payment method has not been set.", new RuntimeException());
             } catch (PaymentNotFoundException pnfe) {
-                logger.error(pnfe.getMessage() + ", " + pnfe.getCause());
+                LOGGER.error(pnfe.getMessage() + ", " + pnfe.getCause());
             }
         } else {
             //double totalPrice = cart.getTotalPrice();
             boolean success = payment.processPayment();
             if (success) {
-                cart.clear();
-                logger.info("Thank you for your purchase!");
+                LOGGER.info("Thank you for your purchase!");
             } else {
-                logger.error("Transaction failed. Please try again or use a different payment method.");
+                LOGGER.error("Transaction failed. Please try again or use a different payment method.");
             }
         }
     }
