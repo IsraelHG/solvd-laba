@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DebitCard extends Payment {
-    public static final Logger logger = LogManager.getLogger(DebitCard.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(DebitCard.class.getName());
 
     private String cardNumber;
     private String expirationDate;
@@ -59,14 +59,14 @@ public class DebitCard extends Payment {
             try {
                 throw new InsufficientFundsException("Insufficient funds", new RuntimeException());
             } catch (InsufficientFundsException ife) {
-                logger.error(ife.getMessage() + ", " + ife.getCause());
+                LOGGER.error(ife.getMessage() + ", " + ife.getCause());
             }
             return false;
         }
 
-        logger.info("Processing debit card payment...");
+        LOGGER.info("Processing debit card payment...");
         balance -= getAmount();
-        logger.info("Remaining balance: " + balance);
+        LOGGER.info("Remaining balance: " + balance);
         return false;
     }
 

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class CreditCard extends Payment {
-    public static final Logger logger = LogManager.getLogger(CreditCard.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(CreditCard.class.getName());
 
     private String cardNumber;
     private String expirationDate;
@@ -59,13 +59,13 @@ public class CreditCard extends Payment {
             try {
                 throw new InsufficientFundsException("Insufficient funds", new RuntimeException());
             } catch (InsufficientFundsException e) {
-                logger.error(e.getMessage() + ", " + e.getCause());
+                LOGGER.error(e.getMessage() + ", " + e.getCause());
             }
             return false;
         }
-        logger.info("Processing credit card payment...");
+        LOGGER.info("Processing credit card payment...");
         balance -= getAmount();
-        logger.info("Remaining balance: " + balance);
+        LOGGER.info("Remaining balance: " + balance);
         return true;
     }
 
