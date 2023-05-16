@@ -1,11 +1,13 @@
 package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.exceptions.UnderageException;
+import com.solvd.util.function.FilterPredicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Represents a shopping cart that contains a list of products.
@@ -19,6 +21,11 @@ public final class Cart {
     public Cart(Customer customer) {
         this.cart = new ArrayList<>();
         this.customer = customer;
+    }
+
+    public Cart(Customer customer, ArrayList<Product> cart) {
+        this.customer = customer;
+        this.cart = cart;
     }
 
     public String getCustomer() {
@@ -66,8 +73,29 @@ public final class Cart {
         return this.cart.isEmpty();
     }
 
+    /**
+     * Filters the products in the cart based on the specified filter condition.
+     *
+     * @param filterCondition The lambda expression representing the filter condition.
+     *                        It takes a Product object as input and returns a boolean value indicating whether the product should be included in the filtered result.
+     * @return A new Cart object containing the filtered products.
+     */
+    public Cart filter(FilterPredicate<Product> filterCondition) {
+        ArrayList<Product> filteredCart = cart.stream()
+                .filter(filterCondition)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return new Cart(customer, filteredCart);
+    }
+
+    /**
+     * Prints the contents of the cart, including each product's details.
+     */
     public void printCart() {
-        LOGGER.info("Printing " + customer.getName() + "'s cart: \n"+ cart);
+        LOGGER.info("Printing " + customer.getName() + "'s cart: ");
+        //System.out.println("Printing " + customer.getName() + "'s cart: ");
+        cart.forEach(LOGGER::info);
+        //cart.forEach(System.out::println);
     }
 
     public ArrayList<Product> getItems() {
@@ -91,8 +119,8 @@ public final class Cart {
      */
     public double calculateTotalPrice(BinaryOperator<Double> totalPriceCalculator) {
         double total = 0.0;
-        for (Product product : cart) {
-            total = totalPriceCalculator.apply(total, product.getPrice() * product.getQuantity());
+        for (Product item : cart) {
+            total = totalPriceCalculator.apply(total, item.getPrice() * item.getQuantity());
         }
         return total * (1 + Main.TAX);
     }

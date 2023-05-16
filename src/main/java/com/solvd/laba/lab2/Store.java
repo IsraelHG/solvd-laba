@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The Store class represents an online store.
@@ -103,14 +103,27 @@ public class Store implements Inventory {
         return this.products;
     }
 
+    /**
+     * Displays all the products in the store.
+     * The products are displayed in the order they are stored internally, without any specific sorting.
+     */
     public void displayProducts() {
-        for (Map.Entry<String, Product> entry : products.entrySet()) {
-            Product product = entry.getValue();
-            LOGGER.info(product);
-            System.out.println(product);
-        }
-        System.out.println();
+        products.values().forEach(LOGGER::info);
     }
+
+    /**
+     * Displays all the products in the store, sorted based on the provided comparator.
+     * The products are sorted using the specified comparator before being displayed.
+     *
+     * @param comparator The comparator used to sort the products.
+     *                   It defines the sorting order for the products.
+     */
+    public void displayProducts(Comparator<Product> comparator) {
+        List<Product> sortedProducts = new ArrayList<>(products.values());
+        sortedProducts.sort(comparator);
+        sortedProducts.forEach(LOGGER::info);
+    }
+
 
     @Override
     public void addProduct(String name, double price, int quantity, Category category) {
@@ -141,6 +154,47 @@ public class Store implements Inventory {
 
     public Product getProduct(String name) {
         return products.get(name);
+    }
+
+    /**
+     * Retrieves all products in the store that belong to the specified category.
+     *
+     * @param category the category to filter the products by
+     * @return a list of products belonging to the specified category
+     */
+    public List<Product> getProductsByCategory(Category category) {
+        return products.values()
+                .stream()
+                .filter(product -> product.getCategory() == category)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all products in the store that have a price within the specified range.
+     *
+     * @param minPrice the minimum price of the range (inclusive)
+     * @param maxPrice the maximum price of the range (inclusive)
+     * @return a list of products within the specified price range
+     */
+    public List<Product> getProductsByPriceRange(double minPrice, double maxPrice) {
+        return products.values()
+                .stream()
+                .filter(product -> product.getPrice() >= minPrice && product.getPrice() <= maxPrice)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Calculates the total stock quantity of products in the store for the specified category.
+     *
+     * @param category the category to calculate the total stock for
+     * @return the total stock quantity of products in the specified category
+     */
+    public int getTotalStockByCategory(Category category) {
+        return products.values()
+                .stream()
+                .filter(product -> product.getCategory() == category)
+                .mapToInt(Product::getQuantity)
+                .sum();
     }
 
     public boolean hasProduct(String name) {
