@@ -55,8 +55,12 @@ public class Main {
         cart.addToCart("milk", store, 3);
         cart.addToCart("eggs", store, 2);
         cart.addToCart("ham", store, 1);
+        cart.addToCart("Laptop", store,1);
         cart.addToCart("alcohol", store, 2);
 
+        Cart filteredCart = cart.filter(product -> product.getPrice() >= 5);
+        filteredCart.printCart();
+        filteredCart.clear();
 
         // Call the addDiscounts() method with the lambda expression as a method argument
         // 1. Custom functional interface using lambda expression.
@@ -77,17 +81,18 @@ public class Main {
 
         // Call the store.validateProducts() method with the lambda expression as a method argument
         // 3. Custom functional interface using lambda expression.
-        ProductValidator priceRangeValidator = product -> product.getPrice() >= 5.0 && product.getPrice() <= 6.0;
+        ProductValidator priceRangeValidator = (product) -> product.getPrice() >= 5.0 && product.getPrice() <= 6.0;
         store.validateProducts(priceRangeValidator);
 
         // Call the store.sortProducts() method with the lambda expression as a method argument
         // 4. Custom functional interface using lambda expression.
-        List<Product> sortedProducts = store.sortProducts(list -> {
+        List<Product> sortedProducts = store.sortProducts((list) -> {
             list.sort(Comparator.comparing(Product::getName));
             return list;
         });
 
         cart.printCart();
+
         double totalPrice = cart.calculateTotalPrice(Double::sum);
         LOGGER.info("Total Price (with tax): $" + totalPrice);
 
@@ -103,6 +108,8 @@ public class Main {
         });
         store.clearCart(cart);
 
+        store.displayProducts();
+        store.displayProducts(Comparator.comparing(Product::getPrice));
         store.employeeClockOut(employeeJohn);
     }
 
