@@ -1,40 +1,40 @@
 package com.solvd.laba.lab2.reflection;
 
+import com.solvd.laba.lab2.Cart;
 import com.solvd.laba.lab2.Store;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.*;
 import java.util.Arrays;
 
 public class ReflectiveOperations {
+    public static final Logger LOGGER = LogManager.getLogger(Cart.class.getName());
+
     public static void main(String[] args) {
-        // Get the Store class
+
         Class<Store> storeClass = Store.class;
 
-        // Get information about fields
         Field[] fields = storeClass.getDeclaredFields();
         for (Field field : fields) {
-            System.out.println("Field Name: " + field.getName());
-            System.out.println("Field Type: " + field.getType());
-            System.out.println("Field Modifiers: " + Modifier.toString(field.getModifiers()));
-            System.out.println();
+            LOGGER.info("Field Name: " + field.getName());
+            LOGGER.info("Field Type: " + field.getType());
+            LOGGER.info("Field Modifiers: " + Modifier.toString(field.getModifiers()));
         }
 
-        // Get information about constructors
         Constructor<?>[] constructors = storeClass.getDeclaredConstructors();
         for (Constructor<?> constructor : constructors) {
-            System.out.println("Constructor Name: " + constructor.getName());
-            System.out.println("Constructor Parameters: " + Arrays.toString(constructor.getParameterTypes()));
-            System.out.println("Constructor Modifiers: " + Modifier.toString(constructor.getModifiers()));
-            System.out.println();
+            LOGGER.info("Constructor Name: " + constructor.getName());
+            LOGGER.info("Constructor Parameters: " + Arrays.toString(constructor.getParameterTypes()));
+            LOGGER.info("Constructor Modifiers: " + Modifier.toString(constructor.getModifiers()));
         }
 
-        // Get information about methods
         Method[] methods = storeClass.getDeclaredMethods();
         for (Method method : methods) {
-            System.out.println("Method Name: " + method.getName());
-            System.out.println("Method Return Type: " + method.getReturnType());
-            System.out.println("Method Parameters: " + Arrays.toString(method.getParameterTypes()));
-            System.out.println("Method Modifiers: " + Modifier.toString(method.getModifiers()));
-            System.out.println();
+            LOGGER.info("Method Name: " + method.getName());
+            LOGGER.info("Method Return Type: " + method.getReturnType());
+            LOGGER.info("Method Parameters: " + Arrays.toString(method.getParameterTypes()));
+            LOGGER.info("Method Modifiers: " + Modifier.toString(method.getModifiers()));
         }
     }
 }
