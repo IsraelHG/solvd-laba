@@ -1,6 +1,5 @@
 package com.solvd.laba.lab2.reflection;
 
-import com.solvd.laba.lab2.Cart;
 import com.solvd.laba.lab2.Store;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,9 +8,9 @@ import java.lang.reflect.*;
 import java.util.Arrays;
 
 public class ReflectiveOperations {
-    public static final Logger LOGGER = LogManager.getLogger(Cart.class.getName());
+    public static final Logger LOGGER = LogManager.getLogger(ReflectiveOperations.class.getName());
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Class<Store> storeClass = Store.class;
 
@@ -36,5 +35,15 @@ public class ReflectiveOperations {
             LOGGER.info("Method Parameters: " + Arrays.toString(method.getParameterTypes()));
             LOGGER.info("Method Modifiers: " + Modifier.toString(method.getModifiers()));
         }
+
+        // Creating a Store object using reflection
+        Constructor<?> constructor = storeClass.getDeclaredConstructor(String.class, String.class);
+        constructor.setAccessible(true); // In case the constructor is not public
+        Store store = (Store) constructor.newInstance("Store (Created by Reflection", "123 Reflection Street");
+
+        // Calling a method on the Store object using reflection
+        Method getNameMethod = storeClass.getDeclaredMethod("getName");
+        getNameMethod.setAccessible(true); // In case the method is not public
+        LOGGER.info(getNameMethod.invoke(store));
     }
 }
