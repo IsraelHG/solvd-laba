@@ -2,9 +2,7 @@ package com.solvd.laba.lab2.enums;
 
 public enum Brand {
     SAMSUNG("Samsung"),
-    APPLE("Apple"),
-    NIKE("Nike"),
-    ADIDAS("Adidas");
+    APPLE("Apple");
 
     private final String name;
 

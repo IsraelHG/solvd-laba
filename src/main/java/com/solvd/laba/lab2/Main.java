@@ -1,6 +1,9 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.Brand;
 import com.solvd.laba.lab2.enums.Category;
+import com.solvd.laba.lab2.enums.Color;
+import com.solvd.laba.lab2.enums.Size;
 import com.solvd.util.function.ProductValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,26 +32,32 @@ public class Main {
         store.register(customerJacob, "jacob@jacob.com", "password456");
 
         store.employeeClockIn(employeeJohn);
+        store.printEmployees();
+        store.printCustomers();
 
         store.addProduct("milk", 3.0, 10, Category.FOODS);
         store.addProduct("eggs", 5.0, 7, Category.FOODS);
         store.addProduct("cheese", 6.0, 30, Category.FOODS);
         store.addProduct("ham", 6.0, 25, Category.FOODS);
         store.addProduct("alcohol", 20.0, 4, Category.FOODS);
-        store.addProduct("Laptop", 700.0, 6, Category.ELECTRONICS);
-        store.addProduct("iPhone 13", 730.0, 10, Category.ELECTRONICS);
+        store.addProduct("Laptop", 700.0, 6, Category.ELECTRONICS, Color.BLUE, Brand.SAMSUNG, Size.MEDIUM);
+        store.addProduct("iPhone 13", 730.0, 10, Category.ELECTRONICS, Color. GREEN, Brand.APPLE, Size.LARGE);
         store.addProduct("The Great Gatsby", 30.0, 8, Category.BOOKS);
-        store.addProduct("Red Plain T-Shirt", 20.0, 20, Category.CLOTHING);
+        store.addProduct("Red Plain T-Shirt", 20.0, 20, Category.CLOTHING, Color.RED,Size.SMALL);
 
         // Example usage of Function to increase product price by 10%
         store.updateProductPrice("milk", price -> price * 1.1);
         // Example usage of Function to decrease product price by 20%
         store.updateProductPrice("eggs", price -> price * 0.8);
 
+        store.displayProducts();
+        store.displayProducts(Comparator.comparing(Product::getPrice));
+
         customerIsrael.browse();
         employeeJohn.restock();
         managerLester.manage();
         store.getHelp(customerIsrael, "milk");
+        LOGGER.info("The color of this laptop is " + store.getColor("Laptop") + " with hexcode of " + store.getHexCode("Laptop"));
 
         Cart cart = new Cart(customerIsrael);
         cart.addToCart("milk", store, 2);
@@ -72,17 +81,25 @@ public class Main {
             }
             return discount;
         });
+        LOGGER.info("-------------------------------------");
 
         // Call the store.filterProducts() method with the lambda expression as a method argument
         // 2. Custom functional interface using lambda expression.
         List<Product> filteredProducts = store.filterProducts((product) ->
                 product.getPrice() > 100.0 && product.getQuantity() > 0
         );
+        LOGGER.info("Filter products by price less than $100:");
+        for (Product filteredProduct : filteredProducts) {
+            LOGGER.info(filteredProduct);
+        }
+        LOGGER.info("-------------------------------------");
 
         // Call the store.validateProducts() method with the lambda expression as a method argument
         // 3. Custom functional interface using lambda expression.
         ProductValidator priceRangeValidator = (product) -> product.getPrice() >= 5.0 && product.getPrice() <= 6.0;
+        LOGGER.info("Validate products by price ranging from $5 - $6:");
         store.validateProducts(priceRangeValidator);
+        LOGGER.info("-------------------------------------");
 
         // Call the store.sortProducts() method with the lambda expression as a method argument
         // 4. Custom functional interface using lambda expression.
@@ -90,6 +107,29 @@ public class Main {
             list.sort(Comparator.comparing(Product::getName));
             return list;
         });
+        LOGGER.info("Sort all of the product alphabetically:");
+        for (Product sortedProduct : sortedProducts) {
+            LOGGER.info(sortedProduct);
+        }
+        LOGGER.info("-------------------------------------");
+
+        LOGGER.info("Filtered products (" + Category.ELECTRONICS + "):");
+        List<Product> productsByCategory = store.getProductsByCategory(Category.ELECTRONICS);
+        for (Product productByCategory : productsByCategory) {
+            LOGGER.info(productByCategory);
+        }
+        LOGGER.info("-------------------------------------");
+
+        LOGGER.info("Filtered products by price range of $5 - $20:");
+        List<Product> productsByPriceRange = store.getProductsByPriceRange(5, 20);
+        for (Product productByPriceRange : productsByPriceRange) {
+            LOGGER.info(productByPriceRange);
+        }
+        LOGGER.info("-------------------------------------");
+
+        LOGGER.info("Total stock by category of " + Category.FOODS + ": " + store.getTotalStockByCategory(Category.FOODS));
+
+        LOGGER.info("-------------------------------------");
 
         cart.printCart();
 
@@ -98,7 +138,6 @@ public class Main {
 
         CreditCard creditCard = new CreditCard(cart.getTotalPrice(), "123456789012", "05/24", 123, 1000);
         store.setPayment(creditCard);
-        store.checkout(cart);
 
         // lambda functions from the function class
         store.sendNotification("israel@israel.com", (customerEmail) -> {
@@ -108,8 +147,6 @@ public class Main {
         });
         store.clearCart(cart);
 
-        store.displayProducts();
-        store.displayProducts(Comparator.comparing(Product::getPrice));
         store.employeeClockOut(employeeJohn);
     }
 
