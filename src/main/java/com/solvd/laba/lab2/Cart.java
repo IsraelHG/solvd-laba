@@ -57,10 +57,6 @@ public final class Cart {
         }
     }
 
-    public void removeFromCart(Product item) {
-        this.cart.remove(item);
-    }
-
     public void clear() {
         this.cart.clear();
     }

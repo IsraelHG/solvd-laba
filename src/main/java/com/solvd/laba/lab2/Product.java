@@ -1,6 +1,9 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.Brand;
 import com.solvd.laba.lab2.enums.Category;
+import com.solvd.laba.lab2.enums.Color;
+import com.solvd.laba.lab2.enums.Size;
 
 public class Product {
     private String name;
@@ -8,6 +11,9 @@ public class Product {
     private double price;
     private int quantity;
     Category category;
+    Color color;
+    Brand brand;
+    Size size;
 
     public Product(String name, int id, double price, int quantity, Category category) {
         this.name = name;
@@ -16,6 +22,37 @@ public class Product {
         this.quantity = quantity;
         this.category = category;
     }
+
+    public Product(String name, int id, double price, int quantity, Category category, Color color) {
+        this.name = name;
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+        this.color = color;
+    }
+
+    public Product(String name, int id, double price, int quantity, Category category, Color color, Brand brand, Size size) {
+        this.name = name;
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+        this.color = color;
+        this.brand = brand;
+        this.size = size;
+    }
+
+    public Product(String name, int id, double price, int quantity, Category category, Color color, Size size) {
+        this.name = name;
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+        this.color = color;
+        this.size = size;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -57,9 +94,28 @@ public class Product {
         return category;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
-    public void subtractProduct(Product product, int quantity) {
-        product.quantity -= quantity;
+    public Color getColor() {
+        return color;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
+    }
+
+    public Size getSize() {
+        return size;
     }
 
     @Override
@@ -70,6 +126,9 @@ public class Product {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", category=" + category +
+                ", color= " + color +
+                ", brand=" + brand +
+                ", size=" + size +
                 '}';
     }
 }

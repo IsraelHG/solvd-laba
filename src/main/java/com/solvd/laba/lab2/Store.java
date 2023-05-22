@@ -1,6 +1,9 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.Brand;
 import com.solvd.laba.lab2.enums.Category;
+import com.solvd.laba.lab2.enums.Color;
+import com.solvd.laba.lab2.enums.Size;
 import com.solvd.laba.lab2.exceptions.EmployeeNotFoundException;
 import com.solvd.laba.lab2.exceptions.PaymentNotFoundException;
 import com.solvd.laba.lab2.interfaces.Inventory;
@@ -133,6 +136,30 @@ public class Store implements Inventory {
         products.put(name, product);
     }
 
+    @Override
+    public void addProduct(String name, double price, int quantity, Category category, Color color) {
+        //Generates unique ID's using the IntSupplier functional interface.
+        int id = idSupplier.getAsInt();
+        Product product = new Product(name, id, price, quantity, category, color);
+        products.put(name, product);
+    }
+
+    @Override
+    public void addProduct(String name, double price, int quantity, Category category, Color color, Size size) {
+        //Generates unique ID's using the IntSupplier functional interface.
+        int id = idSupplier.getAsInt();
+        Product product = new Product(name, id, price, quantity, category, color, size);
+        products.put(name, product);
+    }
+
+    @Override
+    public void addProduct(String name, double price, int quantity, Category category, Color color, Brand brand, Size size) {
+        //Generates unique ID's using the IntSupplier functional interface.
+        int id = idSupplier.getAsInt();
+        Product product = new Product(name, id, price, quantity, category, color, brand, size);
+        products.put(name, product);
+    }
+
     /**
      * Updates the price of a product using the provided price updater function.
      *
@@ -242,8 +269,16 @@ public class Store implements Inventory {
             LOGGER.info("Hi " + customer.getName() +
                     ", my name is " + employeeAccounts.get(0).getName() +
                     ". There's " + products.get(key).getQuantity()
-                    + " " + products.get(key).getName() + " available today.");
+                    + " " + products.get(key).getName() + " available today." + hasProduct(key));
         }
+    }
+
+    public Color getColor(String product) {
+        return products.get(product).getColor();
+    }
+
+    public String getHexCode(String product) {
+        return products.get(product).getColor().getHexCode();
     }
 
     /**
@@ -347,6 +382,7 @@ public class Store implements Inventory {
             boolean success = payment.processPayment();
             if (success) {
                 LOGGER.info("Thank you for your purchase!");
+                cart.clear();
             } else {
                 LOGGER.error("Transaction failed. Please try again or use a different payment method.");
             }
