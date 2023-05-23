@@ -20,9 +20,14 @@ public class ConnectionPool {
      *
      * @return The ConnectionPool instance
      */
-    public static synchronized ConnectionPool getInstance() {
+    public static ConnectionPool getInstance() {
         if (instance == null) {
-            instance = new ConnectionPool();
+            // Using double-checked locking
+            synchronized (ConnectionPool.class) {
+                if (instance == null) {
+                    instance = new ConnectionPool();
+                }
+            }
         }
         return instance;
     }
