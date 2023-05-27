@@ -20,7 +20,7 @@ public class Main {
         }
 
         // Split text into words using StringUtils
-        List<String> list = List.of(StringUtils.split(text));
+        List<String> list = List.of(StringUtils.split(text, "[\\p{Punct}\\s]+"));
 
         // Count unique words using a HashSet
         HashSet<String> hashMap = new HashSet<>(list);
