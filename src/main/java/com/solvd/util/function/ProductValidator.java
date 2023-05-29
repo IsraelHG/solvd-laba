@@ -1,6 +1,6 @@
 package com.solvd.util.function;
 
-import com.solvd.laba.lab2.Product;
+import com.solvd.block1.lab2.Product;
 
 /**
  * Functional interface for validating products.

@@ -3,5 +3,5 @@
 ```
 $ cd src/
 $ javac com/solvd/laba/lab[n] <ClassName>.java
-$ java com.solvd.laba.lab[n] <ClassName>
+$ java com.solvd.block1.lab[n] <ClassName>
 ```
