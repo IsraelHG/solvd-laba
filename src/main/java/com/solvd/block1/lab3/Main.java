@@ -19,8 +19,10 @@ public class Main {
             return;
         }
 
+        String updatedText = text.replaceAll("[^\\w\\s]", "").toLowerCase();
+
         // Split text into words using StringUtils
-        List<String> list = List.of(StringUtils.split(text, "[\\p{Punct}\\s]+"));
+        List<String> list = List.of(StringUtils.split(updatedText));
 
         // Count unique words using a HashSet
         HashSet<String> hashMap = new HashSet<>(list);
